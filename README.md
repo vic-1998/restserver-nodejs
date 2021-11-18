@@ -72,7 +72,7 @@ Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) an
 
 ```bash
 # Clone this project
-$ git clone https://github.com/{{YOUR_GITHUB_USERNAME}}/07-restserver
+$ git clone https://github.com/{{vic-1998}}/07-restserver
 
 # Access
 $ cd restserver-nodejs
