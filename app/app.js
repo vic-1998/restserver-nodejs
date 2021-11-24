@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const port = process.env.PORT || 3000;
+const { dbConnection } = require('../db/config');
 
 class Server {
 
@@ -11,10 +12,16 @@ class Server {
         this.port = port;
         //api router path
         this.api = '/api';
+        // Conectar a base de datos
+        this.conectarDB();
         //middlewares
         this.middlewares();
         //Rutas de la aplicacion
         this.routes();
+    }
+
+    async conectarDB() {
+        await dbConnection();
     }
 
     middlewares() {
@@ -37,7 +44,6 @@ class Server {
             console.log(`Servidor Corriendo en puerto: localhost:${this.port}`);
         });
     }
-
 }
 
 module.exports = Server;

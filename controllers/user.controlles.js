@@ -1,44 +1,77 @@
 const { request, response } = require('express');
+const bcryptjs = require('bcryptjs');
 
+const User = require('../models/user');
 
-const userGet = (req, res) => {
+const userGet = async (req, res) => {
+    // const query = req.query;
+    const { limite = 5, desde = 0 } = req.query;
+    const estadoActivo = { estado: true };
 
-    const query = req.query;
+    //destruturacion de arreglos 
+    const [total, users] = await Promise.all([
+        User.countDocuments(estadoActivo),
+        User.find(estadoActivo)
+            .skip(Number(desde))
+            .limit(Number(limite))
+    ])
 
     res.status(200).json({
-        msg: 'Get Api controlador',
-        query
+        total,
+        users,
     });
 }
 
-const userPost = (req, res) => {
+const userPost = async (req, res = response) => {
+    //estraer la informacion del body
+    const { nombre, correo, password, rol } = req.body;
+    const user = new User({
+        nombre, correo, password, rol
+    });
 
-    const { nombre, edad } = req.body;
+    //encriptar la contraseña
+    const salt = bcryptjs.genSaltSync(10);
+    user.password = bcryptjs.hashSync(password, salt);
+
+    //guardar en db
+    await user.save();
 
     res.status(201).json({
-        msg: 'Post Api controlador',
-        nombre,
-        edad
+        user,
+        msg: "Usuario Creado Correctamente."
     });
 }
 
-const userPut = (req, res) => {
-
+const userPut = async (req, res) => {
+    // obtener el id
     const id = req.params.id;
+    // extraemos los parametos del body que no queremos actualizar
+    //y en userData enviamos los campos a actulizar
+    const { _id, password, google, correo, ...userData } = req.body;
 
-    res.status(400).json({
-        msg: 'Put Api controlador',
-        id
-    });
-}
-
-const userDelete = (req, res) => {
-
-    const id = req.params.id;
+    //validar contra la base de datos
+    if (password) {
+        const salt = bcryptjs.genSaltSync(10);
+        userData.password = bcryptjs.hashSync(password, salt);
+    }
+    // buscamos el id y enviasmos userData para actulizar en la Db
+    const userDB = await User.findByIdAndUpdate(id, userData);
 
     res.status(200).json({
-        msg: 'Delete Api controlador',
-        id
+        userDB,
+        msg: "Usuario Actualizado Correctamente."
+    });
+}
+
+const userDelete = async (req, res) => {
+
+    const id = req.params.id;
+
+    const user = await User.findByIdAndUpdate(id, { estado: false });
+
+    res.status(200).json({
+        user,
+        msg: "Usuario Eliminado Correctamente."
     });
 }
 
