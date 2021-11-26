@@ -12,6 +12,8 @@ class Server {
         this.port = port;
         //api router path
         this.api = '/api';
+        //auth login
+        this.authPath = '/api/auth';
         // Conectar a base de datos
         this.conectarDB();
         //middlewares
@@ -36,6 +38,7 @@ class Server {
     }
 
     routes() {
+        this.app.use(this.authPath, require('../routes/auth.routes'));
         this.app.use(this.api, require('../routes/user.routes'));
     }
 
