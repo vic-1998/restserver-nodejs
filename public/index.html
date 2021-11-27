@@ -31,7 +31,7 @@
 
             let url = (window.location.hostname.includes('localhost'))
                 ? 'http://localhost:8080/api/auth/google'
-                : 'https://restservernodejs.herokuapp.com';
+                : 'https://restservernodejs.herokuapp.com/api/auth/google';
 
 
             const body = { id_token: response.credential };
