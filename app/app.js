@@ -11,9 +11,13 @@ class Server {
         //pueto de la aplicacion
         this.port = port;
         //api router path
-        this.api = '/api';
-        //auth login
-        this.authPath = '/api/auth';
+        this.paths = {
+            auth: '/api/auth',
+            user: '/api/user',
+            category: '/api/category',
+            product: '/api/product',
+            search: '/api/search'
+        };
         // Conectar a base de datos
         this.conectarDB();
         //middlewares
@@ -38,8 +42,11 @@ class Server {
     }
 
     routes() {
-        this.app.use(this.authPath, require('../routes/auth.routes'));
-        this.app.use(this.api, require('../routes/user.routes'));
+        this.app.use(this.paths.auth, require('../routes/auth.routes'));
+        this.app.use(this.paths.user, require('../routes/user.routes'));
+        this.app.use(this.paths.category, require('../routes/category.routes'));
+        this.app.use(this.paths.product, require('../routes/products.routes'));
+        this.app.use(this.paths.search, require('../routes/search.routes'));
     }
 
     listen() {
